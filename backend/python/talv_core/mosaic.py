@@ -117,9 +117,11 @@ def prepare_sequences(df: pd.DataFrame) -> pd.DataFrame:
 
     def to_minutes(series: pd.Series) -> pd.Series:
         s = series.astype("string").fillna("")
-        day = s.str.extract(r"(\d+)\s", expand=False).astype("float").fillna(0)
-        hour = s.str.extract(r"\s(\d+):", expand=False).astype("float").fillna(0)
-        minute = s.str.extract(r":(\d+)", expand=False).astype("float").fillna(0)
+        # Handles both "D HH:MM" (with a day field) and a bare "HH:MM".
+        ext = s.str.extract(r"(?:(\d+)\s+)?(\d{1,2}):(\d{2})")
+        day = pd.to_numeric(ext[0], errors="coerce").fillna(0)
+        hour = pd.to_numeric(ext[1], errors="coerce").fillna(0)
+        minute = pd.to_numeric(ext[2], errors="coerce").fillna(0)
         return day * 1440 + hour * 60 + minute
 
     df["TOT_BLOCK_MI"] = to_minutes(df["TTL_BLOCK_TM_STR"])

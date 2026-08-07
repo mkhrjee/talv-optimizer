@@ -69,12 +69,13 @@ function sendJson(res, status, obj) {
  * Run the python CLI and collect NDJSON lines. onLine is called per parsed
  * object; resolves when the process exits.
  */
-function runPython(args, onLine) {
+function runPython(args, onLine, onSpawn) {
   return new Promise((resolve) => {
     const child = spawn(PYTHON_BIN, ["cli.py", ...args], {
       cwd: PY_DIR,
       env: process.env,
     });
+    if (onSpawn) onSpawn(child);
     let buf = "";
     let stderr = "";
 
@@ -154,7 +155,7 @@ async function handleFourparts(res, url) {
   sendJson(res, 200, { period, items });
 }
 
-async function handleRun(res, url) {
+async function handleRun(req, res, url) {
   const fourparts = url.searchParams.get("fourparts") || "";
   if (!fourparts.trim()) return sendJson(res, 400, { error: "fourparts required" });
 
@@ -168,7 +169,24 @@ async function handleRun(res, url) {
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
   });
-  const sse = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+  let child = null;
+  let closed = false;
+  const cleanup = () => {
+    closed = true;
+    if (child && !child.killed) child.kill();
+  };
+  // If the browser cancels (es.close), refreshes or closes the tab, stop the
+  // Python child instead of leaving it orphaned, and stop writing to the socket.
+  req.on("close", cleanup);
+  res.on("error", () => {
+    closed = true;
+  });
+
+  const sse = (obj) => {
+    if (closed || res.writableEnded) return;
+    res.write(`data: ${JSON.stringify(obj)}\n\n`);
+  };
 
   const downloadId = crypto.randomBytes(8).toString("hex");
   const outPath = path.join(OUT_DIR, `talv-${downloadId}.xlsx`);
@@ -180,19 +198,25 @@ async function handleRun(res, url) {
   if (talvHigh) args.push("--talv-high", talvHigh);
   if (lcw) args.push("--lcw", lcw);
 
-  const { code, stderr } = await runPython(args, (obj) => {
-    if (obj.type === "result") {
-      if (obj.excelPath && fs.existsSync(obj.excelPath)) {
-        downloads.set(downloadId, obj.excelPath);
-        obj.downloadUrl = `/api/download/${downloadId}`;
+  const { code, stderr } = await runPython(
+    args,
+    (obj) => {
+      if (obj.type === "result") {
+        if (obj.excelPath && fs.existsSync(obj.excelPath)) {
+          downloads.set(downloadId, obj.excelPath);
+          obj.downloadUrl = `/api/download/${downloadId}`;
+        }
       }
+      sse(obj);
+    },
+    (c) => {
+      child = c;
     }
-    sse(obj);
-  });
+  );
 
   if (code !== 0 && stderr) sse({ type: "error", message: stderr });
   sse({ type: "done" });
-  res.end();
+  if (!closed && !res.writableEnded) res.end();
 }
 
 function handleDownload(res, id) {
@@ -251,12 +275,16 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/config") return handleConfig(res);
     if (p === "/api/period") return await handlePeriod(res, url);
     if (p === "/api/fourparts") return await handleFourparts(res, url);
-    if (p === "/api/run") return await handleRun(res, url);
+    if (p === "/api/run") return await handleRun(req, res, url);
     if (p.startsWith("/api/download/")) return handleDownload(res, p.split("/").pop());
     if (p === "/api/health") return sendJson(res, 200, { ok: true });
     if (p.startsWith("/api/")) return sendJson(res, 404, { error: "Unknown endpoint" });
     return serveStatic(req, res, p);
   } catch (err) {
+    if (res.headersSent || res.writableEnded) {
+      if (!res.writableEnded) res.end();
+      return;
+    }
     return sendJson(res, 500, { error: err.message });
   }
 });

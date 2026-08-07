@@ -10,11 +10,11 @@ progress to the browser. Each line is a JSON object with a ``type`` field:
   {"type": "result", "optimalByGroup": {...}, "excelPath": "..."}
   {"type": "error", "message": "..."}
 
-Usage:
-  python cli.py period [--mock]
-  python cli.py list-fourparts [--mock]
-  python cli.py run --fourparts A,B --talv-low 72 --talv-high 84 --lcw 7 \
-                    --out results.xlsx [--mock]
+Usage (the --mock flag goes before the subcommand):
+  python cli.py [--mock] period
+  python cli.py [--mock] list-fourparts
+  python cli.py [--mock] run --fourparts A,B --talv-low 72 --talv-high 84 \
+                    --lcw 7 --out results.xlsx
 """
 
 from __future__ import annotations

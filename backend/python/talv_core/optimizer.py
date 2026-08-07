@@ -41,6 +41,7 @@ def determine_rest_days(total_hours: float) -> int:
 class _Seq:
     total: float
     need: np.ndarray  # int indices of occupied + rest day-columns
+    placeable: bool = True  # False if an occupied (flying) day falls outside the window
 
 
 def _build_sequence_index(
@@ -59,34 +60,39 @@ def _build_sequence_index(
             continue
 
         occupied: List[int] = []
+        placeable = True
         for d in pd.date_range(start=start, end=end):
             idx = day_index.get(fmt_day(d.date()))
-            # BUGFIX: silently skip days that fall outside the matrix window
-            # instead of raising an IndexError (notebook assumed every day
-            # existed as a column).
             if idx is not None:
                 occupied.append(idx)
+            else:
+                # BUGFIX: an occupied (flying) day outside the assignment window
+                # cannot be conflict-checked. Rather than silently clip it (which
+                # could let a conflicting sequence be assigned), mark the whole
+                # sequence unplaceable so it is never assigned. The window has an
+                # 8-day tail buffer, so in practice this should not trigger.
+                placeable = False
 
         rest = determine_rest_days(float(seq["Total"]))
         if occupied:
             last = max(occupied)
-            # BUGFIX: rest days are assigned by calendar position for BOTH the
-            # availability check and the marking. The notebook checked
-            # availability using fragile ``%b%-d`` string parsing (which breaks
-            # on Windows and across month/year boundaries) but marked rest days
-            # by column position -- an inconsistency. We unify on position.
+            # Rest days are assigned by calendar position for BOTH the availability
+            # check and the marking (see docs/ALGORITHM.md). Rest days that fall
+            # past the window tail are simply not reserved (buffer days).
             rest_idx = [last + k for k in range(1, rest + 1) if last + k < n_days]
         else:
             rest_idx = []
 
         need = np.array(sorted(set(occupied) | set(rest_idx)), dtype=int)
-        built.append(_Seq(total=float(seq["Total"]), need=need))
+        built.append(_Seq(total=float(seq["Total"]), need=need, placeable=placeable))
 
     return built
 
 
 def _round(x: float, ndigits: int = 2) -> float:
-    return float(np.round(x, ndigits))
+    # Python's round (banker's rounding) to match the original notebook exactly,
+    # rather than numpy's rounding which can differ on binary halfway cases.
+    return round(float(x), ndigits)
 
 
 def _talv_values(low: float, high: float, step: float) -> List[float]:
@@ -135,12 +141,20 @@ def run_group_sweep(
 ) -> GroupResult:
     """Run the TALV sweep for a single 4-part group."""
     seqs = sequences[sequences["4 Part"] == four_part].copy()
-    seqs = seqs.sort_values(by="CreditperDay", ascending=False)
+    # Sort best-first by credit/day, with SEQ_NBR as a deterministic tie-break so
+    # the greedy assignment is reproducible regardless of DB row order.
+    sort_cols = ["CreditperDay"]
+    ascending = [False]
+    if "SEQ_NBR" in seqs.columns:
+        sort_cols.append("SEQ_NBR")
+        ascending.append(True)
+    seqs = seqs.sort_values(by=sort_cols, ascending=ascending)
     total_credit = float(seqs["Total"].sum())
 
     seq_index = _build_sequence_index(seqs, period)
     seq_totals = np.array([s.total for s in seq_index], dtype=float)
     seq_needs = [s.need for s in seq_index]
+    seq_placeable = [s.placeable for s in seq_index]
 
     employees = absences["Employee#"].astype(str).tolist()
     pdabs = absences["PDABS"].to_numpy(dtype=float)
@@ -166,9 +180,11 @@ def run_group_sweep(
 
         occ = np.zeros((n_pilots, n_days), dtype=bool)
 
-        for total, need in zip(seq_totals, seq_needs):
+        for total, need, placeable in zip(seq_totals, seq_needs, seq_placeable):
             if n_pilots == 0:
                 break
+            if not placeable:
+                continue
             eligible = max_avl >= total
             if need.size:
                 conflict = occ[:, need].any(axis=1)
