@@ -1,0 +1,10 @@
+{
+  "name": "talv-optimizer-backend",
+  "version": "1.0.0",
+  "description": "Local backend for the TALV Optimizer self-serve tool. Orchestrates the Python analytics core and streams progress to the browser.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "UNLICENSED"
+}

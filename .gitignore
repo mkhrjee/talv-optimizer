@@ -1,0 +1,23 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Frontend build
+frontend/dist/
+backend/node/public/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated output
+*.xlsx
+!TALVs.xlsx

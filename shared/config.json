@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "TALV Optimizer",
+    "description": "Self-serve tool to find the optimal Target Average Line Value (TALV) for each PBS run."
+  },
+  "defaults": {
+    "talvLow": 72.0,
+    "talvHigh": 84.0,
+    "talvStep": 0.1,
+    "lcw": 7,
+    "lcwOptions": [7, 10]
+  },
+  "mosaic": {
+    "dsn": "Mosaic2"
+  },
+  "widebodyFleets": ["777", "787", "767", "330", "350"],
+  "backend": {
+    "port": 5178
+  }
+}
