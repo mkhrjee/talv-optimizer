@@ -578,13 +578,17 @@ tr.optimal-row {
 .pilot-grid-wrap {
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  max-height: 560px;
+  overflow: auto;
   border: 1px solid var(--aa-gray-200);
   border-radius: 8px;
 }
 table.pilot-grid {
-  border-collapse: collapse;
+  /* separate (not collapse) border model: collapsing borders combined with
+     sticky rows/columns causes a known Chrome/Edge repaint bug where old
+     cell content "ghosts" through the frozen row/columns while scrolling. */
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 13px;
   white-space: nowrap;
 }
@@ -592,7 +596,8 @@ table.pilot-grid {
 .pilot-grid td {
   padding: 6px 12px;
   text-align: right;
-  border-bottom: 1px solid var(--aa-gray-100);
+  background: var(--aa-white);
+  box-shadow: inset 0 -1px 0 var(--aa-gray-100);
 }
 .pilot-grid thead th {
   position: sticky;
@@ -626,21 +631,30 @@ table.pilot-grid {
   background: var(--aa-blue);
   color: var(--aa-white);
 }
+/* Solid (non-transparent) hover backgrounds -- translucent overlays combined
+   with sticky compositing are what produced the visual "bleed" artifacts. */
 .pilot-grid tbody tr:hover td {
-  background: rgba(0, 120, 210, 0.05);
+  background: #eaf3fb;
 }
 .pilot-grid tbody tr:hover td:nth-child(1),
 .pilot-grid tbody tr:hover td:nth-child(2) {
-  background: rgba(0, 120, 210, 0.08);
+  background: #ddeafa;
 }
 .pilot-grid td.rsv-cell {
   color: var(--aa-red);
   font-weight: 700;
 }
-.pilot-grid th.optimal-col,
+/* Optimal (lowest open-time) TALV column: darker header + bold ink text on
+   the lighter body highlight so values stay readable against the tint. */
+.pilot-grid thead th.optimal-col {
+  background: var(--aa-blue-dark);
+  color: var(--aa-white);
+}
 .pilot-grid td.optimal-col {
-  background: rgba(19, 175, 235, 0.14);
+  background: #dcf1fb;
+  color: var(--aa-ink);
+  font-weight: 700;
 }
 .pilot-grid tbody tr:hover td.optimal-col {
-  background: rgba(19, 175, 235, 0.22);
+  background: #c9e9f8;
 }
