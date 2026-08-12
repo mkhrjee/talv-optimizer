@@ -107,9 +107,24 @@ body {
 .grid > div {
   min-width: 0;
 }
+/* Left column (Run configuration) stays pinned in place as a frozen panel
+   while the right column's results scroll past underneath it, instead of
+   leaving a tall blank gap when the form is shorter than the results. */
+.grid > div:first-child {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+  .grid > div:first-child {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
 }
 
