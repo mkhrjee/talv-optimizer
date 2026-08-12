@@ -94,14 +94,13 @@ body {
 /* ---------- Layout ---------- */
 .container {
   width: 100%;
-  max-width: 1800px;
   margin: 0 auto;
-  padding: 24px 32px;
+  padding: 24px clamp(16px, 3vw, 56px);
   flex: 1;
 }
 .grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: minmax(300px, 22%) 1fr;
   gap: 24px;
   align-items: start;
 }
@@ -245,10 +244,19 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 6px 10px;
   background: var(--aa-gray-100);
   font-size: 12px;
   color: var(--aa-slate);
+  white-space: nowrap;
+}
+.ms-toolbar .ms-count {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ms-toolbar .ms-actions {
+  flex-shrink: 0;
 }
 .ms-toolbar button {
   background: none;
@@ -258,6 +266,7 @@ select:focus {
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
+  white-space: nowrap;
 }
 .ms-list {
   max-height: 240px;
@@ -277,10 +286,18 @@ select:focus {
 }
 .ms-item input {
   width: auto;
+  flex-shrink: 0;
   accent-color: var(--aa-blue);
+}
+.ms-item .label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 .ms-item .meta {
   margin-left: auto;
+  flex-shrink: 0;
   font-size: 12px;
   color: var(--aa-gray);
 }

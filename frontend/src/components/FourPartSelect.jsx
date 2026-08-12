@@ -35,10 +35,10 @@ export default function FourPartSelect({ options, selected, onChange, disabled }
           disabled={disabled}
         />
         <div className="ms-toolbar">
-          <span>
-            {selected.length} selected · {options.length} widebody positions
+          <span className="ms-count">
+            {selected.length} of {options.length} selected
           </span>
-          <span>
+          <span className="ms-actions">
             <button type="button" onClick={selectAll} disabled={disabled}>
               Select all
             </button>{" "}
@@ -60,9 +60,8 @@ export default function FourPartSelect({ options, selected, onChange, disabled }
                 onChange={() => toggle(o.fourPart)}
                 disabled={disabled}
               />
-              <span>
-                <strong>{o.label}</strong>{" "}
-                <span style={{ color: "var(--aa-gray)" }}>({o.fourPart})</span>
+              <span className="label">
+                <strong>{o.label}</strong>
               </span>
               <span className="meta">{o.sequences} seq</span>
             </label>
