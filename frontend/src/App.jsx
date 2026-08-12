@@ -127,6 +127,10 @@ export default function App() {
                 totalPilots: obj.totalPilots,
                 totalCredit: obj.totalCredit,
                 summary: obj.summary,
+                employees: obj.employees,
+                plannedAbsence: obj.plannedAbsence,
+                tracker: obj.tracker,
+                reserveFlag: obj.reserveFlag,
               },
             ]);
           } else if (obj.type === "result") {

@@ -526,16 +526,108 @@ tr.optimal-row {
   display: inline-block;
 }
 
-/* ---------- Results split (chart + table side by side on wide screens) ---------- */
+/* ---------- Results split (chart + table side by side, equal size, top half of screen) ---------- */
 .results-split {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
   margin-top: 24px;
+}
+.chart-card {
+  height: 52vh;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+.chart-card .table-wrap {
+  flex: 1;
+  max-height: none;
+}
+.chart-card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.chart-card-body > div {
+  width: 100%;
 }
 @media (max-width: 1200px) {
   .results-split {
     grid-template-columns: 1fr;
   }
+  .chart-card {
+    height: auto;
+  }
+}
+
+/* ---------- Pilot grid (Employee# / PlannedAbsenceCredit / TALV columns) ---------- */
+.pilot-grid-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+  border: 1px solid var(--aa-gray-200);
+  border-radius: 8px;
+}
+table.pilot-grid {
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.pilot-grid th,
+.pilot-grid td {
+  padding: 6px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--aa-gray-100);
+}
+.pilot-grid thead th {
+  position: sticky;
+  top: 0;
+  background: var(--aa-blue);
+  color: var(--aa-white);
+  font-weight: 600;
+  z-index: 2;
+}
+.pilot-grid th:nth-child(1),
+.pilot-grid td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  min-width: 100px;
+  text-align: left;
+  background: var(--aa-white);
+}
+.pilot-grid th:nth-child(2),
+.pilot-grid td:nth-child(2) {
+  position: sticky;
+  left: 100px;
+  z-index: 3;
+  min-width: 160px;
+  text-align: left;
+  background: var(--aa-white);
+}
+.pilot-grid thead th:nth-child(1),
+.pilot-grid thead th:nth-child(2) {
+  z-index: 4;
+  background: var(--aa-blue);
+  color: var(--aa-white);
+}
+.pilot-grid tbody tr:hover td {
+  background: rgba(0, 120, 210, 0.05);
+}
+.pilot-grid tbody tr:hover td:nth-child(1),
+.pilot-grid tbody tr:hover td:nth-child(2) {
+  background: rgba(0, 120, 210, 0.08);
+}
+.pilot-grid td.rsv-cell {
+  color: var(--aa-red);
+  font-weight: 700;
+}
+.pilot-grid th.optimal-col,
+.pilot-grid td.optimal-col {
+  background: rgba(19, 175, 235, 0.14);
+}
+.pilot-grid tbody tr:hover td.optimal-col {
+  background: rgba(19, 175, 235, 0.22);
 }

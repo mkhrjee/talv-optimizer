@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TalvChart from "./TalvChart.jsx";
 import SummaryTable from "./SummaryTable.jsx";
+import PilotGridTable from "./PilotGridTable.jsx";
 
 function OptimalCards({ groups }) {
   return (
@@ -67,19 +68,40 @@ export default function ResultsDashboard({ groups, downloadUrl, apiBase }) {
       )}
 
       <div className="results-split">
-        <div className="card">
+        <div className="card chart-card">
           <h3>
             {g.label || g.fourPart} — optimal TALV {g.optimalTalv.toFixed(1)} (open time{" "}
             {g.bestOpenTime}%)
           </h3>
-          <TalvChart summary={g.summary} optimalTalv={g.optimalTalv} />
+          <div className="chart-card-body">
+            <TalvChart summary={g.summary} optimalTalv={g.optimalTalv} />
+          </div>
         </div>
 
-        <div className="card">
+        <div className="card chart-card">
           <h3>Summary table — {g.label || g.fourPart}</h3>
           <SummaryTable summary={g.summary} optimalTalv={g.optimalTalv} />
         </div>
       </div>
+
+      {g.employees && g.employees.length > 0 && (
+        <div className="card" style={{ marginTop: 24 }}>
+          <h3>
+            Pilot credit by TALV — {g.label || g.fourPart}{" "}
+            <span className="hint" style={{ display: "inline" }}>
+              (scroll right for more TALVs)
+            </span>
+          </h3>
+          <PilotGridTable
+            employees={g.employees}
+            plannedAbsence={g.plannedAbsence}
+            tracker={g.tracker}
+            reserveFlag={g.reserveFlag}
+            talvs={g.summary.map((d) => d.talv)}
+            optimalTalv={g.optimalTalv}
+          />
+        </div>
+      )}
     </div>
   );
 }
