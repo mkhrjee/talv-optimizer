@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// base: "./" makes asset paths relative so the same build works on GitHub
-// Pages (any subpath), when served by the local backend, or from file://.
+// base: "./" makes asset paths relative so the build works when served from
+// the local backend at any host/port, or opened via file://.
 export default defineConfig({
   plugins: [react()],
   base: "./",

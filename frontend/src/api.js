@@ -1,16 +1,12 @@
 // API base resolution:
-//  - explicit override via VITE_BACKEND_URL
-//  - when the app is opened directly from the local backend (localhost),
-//    use same-origin relative requests
-//  - otherwise (e.g. served from GitHub Pages) call the local backend
+//  - explicit override via VITE_BACKEND_URL (used by `npm run dev`, which proxies
+//    /api to localhost:5178 anyway)
+//  - otherwise same-origin relative requests, since the app is always served by
+//    the local backend at http://localhost:5178
 export const API_BASE = (() => {
   const override = import.meta.env.VITE_BACKEND_URL;
   if (override) return override.replace(/\/$/, "");
-  if (typeof window !== "undefined") {
-    const h = window.location.hostname;
-    if (h === "localhost" || h === "127.0.0.1") return "";
-  }
-  return "http://localhost:5178";
+  return "";
 })();
 
 async function getJson(path) {

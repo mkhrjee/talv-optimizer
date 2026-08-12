@@ -1,9 +1,10 @@
 <#
-  One-time setup for the TALV Optimizer local backend.
+  One-time setup for the TALV Optimizer local tool (fully local — nothing is
+  hosted externally).
   - Installs Python dependencies (backend/python/requirements.txt)
   - Installs frontend npm dependencies and builds the app into
-    backend/node/public  (so the tool also works fully offline / when a
-    GitHub Pages HTTPS page cannot reach http://localhost).
+    backend/node/public, so the local backend can serve it directly at
+    http://localhost:5178.
 
   Prerequisites: Python 3.10+ and Node.js 18+ on PATH, plus the "Mosaic2"
   ODBC DSN configured for live runs.

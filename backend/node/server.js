@@ -2,8 +2,8 @@
  * TALV Optimizer — local backend.
  *
  * Zero-dependency Node HTTP server (built-in modules only) that:
- *   - serves the built React app from ./public  (localhost fallback so the
- *     tool works even if a GitHub Pages HTTPS page can't reach http://localhost)
+ *   - serves the built React app from ./public (this is the sole way the app is
+ *     hosted — everything runs locally on the analyst's machine)
  *   - exposes a small JSON/SSE API that shells out to the Python core
  *   - streams run progress to the browser via Server-Sent Events
  *
@@ -251,7 +251,7 @@ function serveStatic(req, res, pathname) {
       }
       return sendJson(res, 404, {
         error:
-          "Frontend not built. Run `npm run build` in ../../frontend and copy dist to ./public, or use the GitHub Pages site.",
+          "Frontend not built. Run scripts\\setup.ps1 (or `npm run build` in ../../frontend and copy dist to ./public).",
       });
     }
     const ext = path.extname(filePath).toLowerCase();

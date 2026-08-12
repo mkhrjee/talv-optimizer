@@ -8,9 +8,9 @@
 | **Node.js 18+** | On `PATH` (`node --version`). Runs the local API. |
 | **`Mosaic2` ODBC DSN** | Windows integrated auth. Required for live runs. |
 
-> The tool runs its data queries **on your machine** through the `Mosaic2` DSN, so
-> nothing sensitive leaves your laptop. The website (GitHub Pages) only talks to your
-> local backend at `http://localhost:5178`.
+> The tool runs entirely **on your machine**: the local backend serves the web app
+> and queries Mosaic through the `Mosaic2` DSN. Nothing is hosted externally and
+> nothing sensitive leaves your laptop.
 
 ## One-time setup
 
@@ -32,9 +32,7 @@ This installs Python and Node dependencies and builds a local copy of the app.
 
    or double-click **`Start-Backend.bat`**.
 
-2. Open the tool:
-   - the **GitHub Pages URL** for the project, **or**
-   - `http://localhost:5178` directly (served by the backend).
+2. Open the tool at **`http://localhost:5178`** (served by the backend).
 
 3. In the tool:
    - Pick one or more **widebody bid positions** (multi-select; your last selection is
@@ -63,10 +61,6 @@ A yellow "mock mode" banner appears so results are never mistaken for real data.
 - Make sure the backend window is running and shows
   `listening on http://localhost:5178`.
 - Reload the page.
-
-**Browser blocks the localhost call from the Pages site**
-- Some browsers block an HTTPS page from calling `http://localhost`. Simplest fix:
-  open **`http://localhost:5178`** directly — the backend serves the same app.
 
 **"pyodbc is not installed" / DSN errors**
 - Re-run `scripts\setup.ps1`.

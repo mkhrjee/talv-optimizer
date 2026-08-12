@@ -11,27 +11,29 @@ This replaces the hand-run Databricks notebook (`TALV Final - 777CALAXI.ipynb`).
 
 ## Architecture
 
+The whole tool runs **locally on each analyst's machine** — nothing is hosted
+externally. A single local Node server serves the React app *and* the API, and
+spawns the Python analytics core, which talks to Mosaic through the local ODBC DSN.
+
 ```
-┌────────────────────┐        ┌──────────────────────────────────────────┐
-│  React frontend     │  HTTP  │  Local backend (analyst's machine)        │
-│  (GitHub Pages)     │ ─────▶ │  Node API  ──spawns──▶  Python core        │
-│  charts + Excel dl  │  SSE   │  (localhost:5178)       pyodbc DSN=Mosaic2 │
-└────────────────────┘        └──────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│  Analyst's machine                                                 │
+│                                                                     │
+│  Browser ──▶ http://localhost:5178 ──▶ Node API ──spawns──▶ Python core │
+│              (serves the built React app   (JSON/SSE)      pyodbc DSN=Mosaic2 │
+│               + the API, same origin)                                  │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
-- **Frontend** (`frontend/`) — React + Vite, deployed to GitHub Pages. Static only.
-- **Backend** (`backend/node/`) — zero-dependency Node HTTP server. Serves a small
-  JSON/SSE API and (optionally) the built frontend. Runs **locally** because it needs
-  the Mosaic ODBC DSN.
+- **Frontend** (`frontend/`) — React + Vite. Built once and served locally by the
+  Node backend (no external hosting).
+- **Backend** (`backend/node/`) — zero-dependency Node HTTP server. Serves the
+  built frontend and a small JSON/SSE API. Runs **locally** because it needs the
+  Mosaic ODBC DSN.
 - **Python core** (`backend/python/`) — the analytics: Mosaic queries (pyodbc),
   the greedy assignment + TALV sweep, and Excel generation. This is a
   behaviour-preserving port of the notebook (Spark → pandas), with bug fixes flagged
   in the code (`BUGFIX` comments). See [`docs/ALGORITHM.md`](docs/ALGORITHM.md).
-
-Because GitHub Pages is HTTPS and the backend is `http://localhost`, the frontend
-detects and calls the local backend. If a browser blocks the cross-origin/localhost
-call, the backend can also **serve the app itself** at `http://localhost:5178`
-(built into `backend/node/public`).
 
 ## Quick start (analyst)
 
@@ -46,7 +48,7 @@ powershell -ExecutionPolicy Bypass -File scripts\run-backend.ps1
 #   ...or just double-click Start-Backend.bat
 ```
 
-Then open the **GitHub Pages URL** (or `http://localhost:5178` directly) and run.
+Then open **`http://localhost:5178`** in your browser and run.
 
 ### Try it without Mosaic (synthetic data)
 
@@ -76,12 +78,11 @@ core, Node backend and frontend.
 
 | Path | Purpose |
 |------|---------|
-| `frontend/` | React app (GitHub Pages) |
-| `backend/node/` | Local API + SSE + static fallback |
+| `frontend/` | React app (built and served locally by the Node backend) |
+| `backend/node/` | Local API + SSE + static file server |
 | `backend/python/` | Analytics core, Mosaic queries, Excel generation |
 | `shared/config.json` | Single source of shared defaults |
 | `scripts/` | Setup and run helpers |
 | `docs/` | Algorithm notes and analyst setup guide |
-| `.github/workflows/` | GitHub Pages deploy |
 
 See [`docs/SETUP.md`](docs/SETUP.md) for the full analyst guide and troubleshooting.
