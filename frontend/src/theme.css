@@ -109,12 +109,16 @@ body {
 }
 /* Left column (Run configuration) stays pinned in place as a frozen panel
    while the right column's results scroll past underneath it, instead of
-   leaving a tall blank gap when the form is shorter than the results. */
+   leaving a tall blank gap when the form is shorter than the results. Fixed
+   (not max-) height + flex column lets the run-form card stretch to fill it,
+   which in turn lets the bid-position list absorb the extra space. */
 .grid > div:first-child {
   position: sticky;
   top: 24px;
   align-self: start;
-  max-height: calc(100vh - 48px);
+  height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
 }
 @media (max-width: 900px) {
@@ -123,7 +127,7 @@ body {
   }
   .grid > div:first-child {
     position: static;
-    max-height: none;
+    height: auto;
     overflow-y: visible;
   }
 }
@@ -158,6 +162,34 @@ body {
   font-weight: 600;
   margin-bottom: 6px;
   color: var(--aa-ink);
+}
+
+/* Run configuration card fills the sticky left panel's full height; the
+   bid-position list is the one field that stretches to absorb the extra
+   vertical space instead of leaving whitespace below the button. */
+.run-form-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.bid-field {
+  flex: 1;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+}
+.bid-field .fps {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bid-field .ms {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 .hint {
   font-size: 12px;
@@ -288,7 +320,9 @@ select:focus {
   white-space: nowrap;
 }
 .ms-list {
-  max-height: 240px;
+  flex: 1;
+  min-height: 160px;
+  max-height: 480px;
   overflow-y: auto;
 }
 .ms-item {

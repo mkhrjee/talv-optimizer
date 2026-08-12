@@ -17,10 +17,10 @@ export default function RunForm({
     !running && form.fourParts.length > 0 && Number(form.talvLow) < Number(form.talvHigh);
 
   return (
-    <div className="card">
+    <div className="card run-form-card">
       <h2>Run configuration</h2>
 
-      <div className="field">
+      <div className="field bid-field">
         <label>Bid positions (widebody)</label>
         {loadingOptions ? (
           <div className="hint">Loading available positions…</div>

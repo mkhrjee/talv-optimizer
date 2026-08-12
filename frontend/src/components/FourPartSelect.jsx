@@ -24,8 +24,8 @@ export default function FourPartSelect({ options, selected, onChange, disabled }
   const clearAll = () => onChange([]);
 
   return (
-    <div>
-      <div className="ms">
+    <div className="fps">
+      <div className="ms ms-flex">
         <input
           className="ms-search"
           type="text"
