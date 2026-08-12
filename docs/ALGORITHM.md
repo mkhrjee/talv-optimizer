@@ -55,7 +55,7 @@ given bid position (4-part), what TALV minimizes open time?*
 
 The numeric semantics (starting credit = PDABS, `Max_Avl` / `Min_Req` definitions,
 greedy best-first / seniority-order assignment, reserve = `Min_Req > 0`, open time =
-Σ over reserves of `Cred_Hrs − PDABS`, and the `8888` reserve marker in the tracker)
+Σ over reserves of `Cred_Hrs − PDABS`, and the `RSV` reserve marker in the tracker)
 are preserved.
 
 ## Known limitation: sequence tie-break is non-deterministic (by design, matches production)

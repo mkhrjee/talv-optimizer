@@ -4,7 +4,7 @@ Layout per 4-part sheet (matches the analysts' current file):
   * A1:D  -> summary table: TALV, Lineholders, Reserves, Open Time (%)
   * G1:H  -> Employee#, PlannedAbsenceCredit
   * I1..  -> one column per TALV ("TALV: xx.x"): per-pilot sequence credit,
-             replaced with 8888 where the pilot would fall to Reserve.
+             replaced with "RSV" where the pilot would fall to Reserve.
   * A line chart of Lineholders / Reserves / Open Time (%) over the TALV range.
 """
 
@@ -19,7 +19,7 @@ from openpyxl.utils import get_column_letter
 
 from .optimizer import GroupResult
 
-RESERVE_SENTINEL = 8888
+RESERVE_SENTINEL = "RSV"
 
 # American Airlines palette.
 AA_BLUE = "0078D2"
