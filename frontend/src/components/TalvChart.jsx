@@ -73,13 +73,15 @@ export default function TalvChart({ summary, optimalTalv }) {
   };
 
   return (
-    <div>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        style={{ width: "100%", height: "auto" }}
-        onMouseMove={handleMove}
-        onMouseLeave={() => setHover(null)}
-      >
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ width: "100%", height: "100%", display: "block" }}
+          onMouseMove={handleMove}
+          onMouseLeave={() => setHover(null)}
+        >
         {/* gridlines + left axis ticks */}
         {Array.from({ length: yTicks + 1 }).map((_, i) => {
           const v = (model.maxPilots / yTicks) * i;
@@ -182,7 +184,8 @@ export default function TalvChart({ summary, optimalTalv }) {
             <circle cx={model.x(hover.talv)} cy={model.yR(hover.openTime)} r="4" fill={COLORS.openTime} />
           </g>
         )}
-      </svg>
+        </svg>
+      </div>
 
       {hover && (
         <div style={{ textAlign: "center", fontSize: 13, color: "var(--aa-ink)" }}>
