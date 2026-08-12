@@ -66,17 +66,19 @@ export default function ResultsDashboard({ groups, downloadUrl, apiBase }) {
         </div>
       )}
 
-      <div className="card" style={{ marginTop: groups.length > 1 ? 0 : 16 }}>
-        <h3>
-          {g.label || g.fourPart} — optimal TALV {g.optimalTalv.toFixed(1)} (open time{" "}
-          {g.bestOpenTime}%)
-        </h3>
-        <TalvChart summary={g.summary} optimalTalv={g.optimalTalv} />
-      </div>
+      <div className="results-split">
+        <div className="card">
+          <h3>
+            {g.label || g.fourPart} — optimal TALV {g.optimalTalv.toFixed(1)} (open time{" "}
+            {g.bestOpenTime}%)
+          </h3>
+          <TalvChart summary={g.summary} optimalTalv={g.optimalTalv} />
+        </div>
 
-      <div className="card" style={{ marginTop: 24 }}>
-        <h3>Summary table — {g.label || g.fourPart}</h3>
-        <SummaryTable summary={g.summary} optimalTalv={g.optimalTalv} />
+        <div className="card">
+          <h3>Summary table — {g.label || g.fourPart}</h3>
+          <SummaryTable summary={g.summary} optimalTalv={g.optimalTalv} />
+        </div>
       </div>
     </div>
   );

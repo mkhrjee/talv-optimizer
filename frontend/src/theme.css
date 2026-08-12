@@ -94,14 +94,14 @@ body {
 /* ---------- Layout ---------- */
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 32px;
   flex: 1;
 }
 .grid {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 24px;
   align-items: start;
 }
@@ -401,7 +401,7 @@ select:focus {
 /* ---------- Table ---------- */
 .table-wrap {
   overflow: auto;
-  max-height: 420px;
+  max-height: 560px;
   border: 1px solid var(--aa-gray-200);
   border-radius: 8px;
 }
@@ -507,4 +507,18 @@ tr.optimal-row {
   height: 3px;
   border-radius: 2px;
   display: inline-block;
+}
+
+/* ---------- Results split (chart + table side by side on wide screens) ---------- */
+.results-split {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+}
+@media (max-width: 1200px) {
+  .results-split {
+    grid-template-columns: 1fr;
+  }
 }
