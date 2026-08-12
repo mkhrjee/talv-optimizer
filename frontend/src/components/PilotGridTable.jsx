@@ -7,7 +7,12 @@ import React from "react";
 export default function PilotGridTable({ employees, plannedAbsence, tracker, reserveFlag, talvs, optimalTalv }) {
   if (!employees || employees.length === 0) return null;
 
-  const talvKeys = talvs.map((t) => `TALV: ${t}`);
+  // Backend keys are built in Python as f"TALV: {talv}" where talv is a float
+  // (e.g. "TALV: 72.0"). JSON serializes 72.0 as the plain number 72, so a raw
+  // template literal here would produce "TALV: 72" (no decimal) and miss the
+  // lookup. TALV values always step by 0.1, so toFixed(1) reproduces the
+  // exact backend key.
+  const talvKeys = talvs.map((t) => `TALV: ${t.toFixed(1)}`);
 
   return (
     <div className="pilot-grid-wrap">
