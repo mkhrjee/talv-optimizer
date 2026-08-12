@@ -48,14 +48,44 @@ given bid position (4-part), what TALV minimizes open time?*
 | `calculateOpenTime` | `open_time_perc` only set inside the `Min_Req>0` branch → `UnboundLocalError` when there were **no reserves** | Open time is computed after the loop and is well-defined (0 when no reserves) |
 | `isReqd` helper | Referenced non-existent columns `"Employee"` / `"Min_Reqd"` (would crash; unused) | Dropped; reserve status derived directly from `Min_Req` |
 | Rest-day dates | Availability check used `%b%-d` string parsing (`%-d` is invalid on Windows; breaks across month/year) but marked rest days by column position — inconsistent | Unified: occupied + rest days computed by **calendar column position** |
-| Out-of-window days | Assumed every sequence day existed as a matrix column (could `IndexError`) | Days outside the assignment window are skipped safely |
+| Out-of-window days | Assumed every sequence day existed as a matrix column (could `IndexError`) | Sequences with a flying day outside the assignment window are marked unplaceable (never assigned) rather than silently clipped |
 | `SEQ_CALNDR_DAY_CT = 0` | Would divide by zero in `CreditperDay` | Guarded (NaN instead of error) |
+| Interval parsing | `to_minutes` regex assumed a `"D HH:MM"` format; broke on bare `"HH:MM"` | Single regex now handles both forms |
 | Performance | `DataFrame.iterrows` triple loop (slow) | Vectorised with NumPy occupancy arrays — same result, seconds instead of minutes |
 
 The numeric semantics (starting credit = PDABS, `Max_Avl` / `Min_Req` definitions,
 greedy best-first / seniority-order assignment, reserve = `Min_Req > 0`, open time =
 Σ over reserves of `Cred_Hrs − PDABS`, and the `8888` reserve marker in the tracker)
 are preserved.
+
+## Known limitation: sequence tie-break is non-deterministic (by design, matches production)
+
+The sequence sort — `sequences_df.sort_values(by='CreditperDay', ascending=False)` —
+has **no secondary sort key**, and pandas' default sort algorithm (`quicksort`) is
+**not stable**. In a real 4-part it is common for the large majority of sequences to
+share an identical `CreditperDay` (e.g. one recurring pairing flown many times in the
+month, all with the same credit/day) — for 777CALAXI in one live sample, **93 of 97
+sequences (96%) were tied**. Because the greedy assignment is "first eligible pilot
+gets it", the specific pilot-to-sequence assignment (and therefore the exact
+lineholder/reserve split and open-time %) is sensitive to the order in which tied
+sequences are processed.
+
+**This tool intentionally reproduces that behaviour exactly** — the sort here has
+**no secondary/tie-break key**, matching the production notebook bit-for-bit — because
+production already runs this way and analysts need the tool's output to match it. An
+earlier version of this port added a deterministic `SEQ_NBR` tie-break for
+reproducibility, but that changed which pilot certain tied sequences land on relative
+to production, producing a different (but not "wrong") result. It was reverted.
+
+Practical implications:
+- Rerunning the *same* Mosaic data through this tool should reproduce the same result
+  each time within one Python process (quicksort is deterministic for a given input
+  array), but a different day's data pull (different row order from Teradata) can
+  change how ties resolve — this is an existing property of production, not something
+  introduced by this port.
+- **TODO** (tracked, not yet decided): if/when production adopts an explicit,
+  documented tie-break rule (e.g. earliest sequence start date), update this sort to
+  match it exactly.
 
 ## Assumptions to confirm
 

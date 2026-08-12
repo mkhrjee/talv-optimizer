@@ -141,14 +141,18 @@ def run_group_sweep(
 ) -> GroupResult:
     """Run the TALV sweep for a single 4-part group."""
     seqs = sequences[sequences["4 Part"] == four_part].copy()
-    # Sort best-first by credit/day, with SEQ_NBR as a deterministic tie-break so
-    # the greedy assignment is reproducible regardless of DB row order.
-    sort_cols = ["CreditperDay"]
-    ascending = [False]
-    if "SEQ_NBR" in seqs.columns:
-        sort_cols.append("SEQ_NBR")
-        ascending.append(True)
-    seqs = seqs.sort_values(by=sort_cols, ascending=ascending)
+    # Sort best-first by credit/day, matching the original notebook's
+    # ``sequences_df.sort_values(by='CreditperDay', ascending=False)`` exactly:
+    # no secondary sort key, default (non-stable) quicksort. This is required to
+    # match the production notebook's output bit-for-bit -- see docs/ALGORITHM.md
+    # "Known limitation: tie-break non-determinism". A large share of sequences in
+    # a real 4-part can share an identical CreditperDay (recurring pairings), so
+    # the resulting greedy assignment is inherently order-sensitive; production
+    # has never had a deterministic tie-break, and analysts expect this tool to
+    # reproduce that exact (order-sensitive) behavior rather than "fix" it.
+    # TODO: revisit if/when production adopts an explicit, documented tie-break
+    # rule -- at that point this should be updated to match it exactly.
+    seqs = seqs.sort_values(by="CreditperDay", ascending=False)
     total_credit = float(seqs["Total"].sum())
 
     seq_index = _build_sequence_index(seqs, period)
