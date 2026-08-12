@@ -9,6 +9,10 @@ interactive dashboard and a downloadable Excel workbook (matching the existing
 
 This replaces the hand-run Databricks notebook (`TALV Final - 777CALAXI.ipynb`).
 
+> Just want to run the tool? See **[HOW TO USE.md](HOW%20TO%20USE.md)** and
+> double-click `Start TALV Optimizer.bat`. The rest of this README is for
+> developers/maintainers.
+
 ## Architecture
 
 The whole tool runs **locally on each analyst's machine** — nothing is hosted
