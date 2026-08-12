@@ -3,11 +3,16 @@ import TalvChart from "./TalvChart.jsx";
 import SummaryTable from "./SummaryTable.jsx";
 import PilotGridTable from "./PilotGridTable.jsx";
 
-function OptimalCards({ groups }) {
+function OptimalCards({ groups, active, onSelect }) {
   return (
     <div className="optimal-cards">
-      {groups.map((g) => (
-        <div className="optimal-card" key={g.fourPart}>
+      {groups.map((g, i) => (
+        <button
+          type="button"
+          className={"optimal-card" + (i === active ? " optimal-card-active" : "")}
+          key={g.fourPart}
+          onClick={() => onSelect(i)}
+        >
           <div className="fp">{g.label || g.fourPart}</div>
           <div className="talv">{g.optimalTalv.toFixed(1)}</div>
           <div className="fp">optimal TALV</div>
@@ -19,7 +24,7 @@ function OptimalCards({ groups }) {
               Pilots <b>{g.totalPilots}</b>
             </span>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -29,7 +34,8 @@ export default function ResultsDashboard({ groups, downloadUrl, apiBase }) {
   const [active, setActive] = useState(0);
   if (!groups || groups.length === 0) return null;
 
-  const g = groups[active];
+  const activeIdx = active < groups.length ? active : 0;
+  const g = groups[activeIdx];
 
   return (
     <div>
@@ -51,21 +57,8 @@ export default function ResultsDashboard({ groups, downloadUrl, apiBase }) {
         )}
       </div>
 
-      <OptimalCards groups={groups} />
+      <OptimalCards groups={groups} active={activeIdx} onSelect={setActive} />
 
-      {groups.length > 1 && (
-        <div className="tabs" style={{ marginTop: 16 }}>
-          {groups.map((grp, i) => (
-            <button
-              key={grp.fourPart}
-              className={i === active ? "active" : ""}
-              onClick={() => setActive(i)}
-            >
-              {grp.label || grp.fourPart}
-            </button>
-          ))}
-        </div>
-      )}
 
       <div className="results-split">
         <div className="card chart-card">
