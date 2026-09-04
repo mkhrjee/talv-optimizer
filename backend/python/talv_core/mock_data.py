@@ -22,6 +22,7 @@ MOCK_FOURPARTS = [
     "787FOMIAI",
     "320CALGAI",
     "320FOLGAI",
+    "320CALGAD",
 ]
 
 

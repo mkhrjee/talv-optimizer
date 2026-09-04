@@ -185,7 +185,7 @@ def summarize_fourparts(seq: pd.DataFrame, fleets: List[str]) -> List[dict]:
             sequences=("SEQ_NBR", "count"),
         )
         .reset_index()
-        .sort_values(["base", "equipment", "seat"])
+        .sort_values(["base", "equipment", "seat", "division"])
     )
     out: List[dict] = []
     for _, r in grouped.iterrows():
@@ -197,7 +197,7 @@ def summarize_fourparts(seq: pd.DataFrame, fleets: List[str]) -> List[dict]:
                 "seat": str(r["seat"]),
                 "base": str(r["base"]),
                 "division": str(r["division"]),
-                "label": f"{r['base']} {r['equipment']} {r['seat']}",
+                "label": f"{r['base']} {r['equipment']} {r['seat']} {r['division']}",
                 "sequences": int(r["sequences"]),
             }
         )
