@@ -26,7 +26,7 @@ class Settings:
     lcw_options: List[int] = field(default_factory=lambda: [7, 10])
     dsn: str = "Mosaic2"
     widebody_fleets: List[str] = field(default_factory=lambda: ["777", "787"])
-    narrowbody_fleets: List[str] = field(default_factory=lambda: ["737", "319", "320", "321"])
+    narrowbody_fleets: List[str] = field(default_factory=lambda: ["737", "320"])
 
 
 def load_settings(path: str | Path | None = None) -> Settings:
@@ -42,6 +42,6 @@ def load_settings(path: str | Path | None = None) -> Settings:
         dsn=str(data.get("mosaic", {}).get("dsn", "Mosaic2")),
         widebody_fleets=[str(x) for x in data.get("widebodyFleets", ["777", "787"])],
         narrowbody_fleets=[
-            str(x) for x in data.get("narrowbodyFleets", ["737", "319", "320", "321"])
+            str(x) for x in data.get("narrowbodyFleets", ["737", "320"])
         ],
     )
