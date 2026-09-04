@@ -24,6 +24,7 @@ export default function App() {
   // Remembered last selection (defaults for next run).
   const [savedForm, setSavedForm] = useLocalStorage("talv.form", DEFAULT_FORM);
   const [form, setForm] = useState(savedForm);
+  const [fleetType, setFleetType] = useLocalStorage("talv.fleetType", "widebody");
 
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(null);
@@ -76,6 +77,18 @@ export default function App() {
     () => (config ? config.defaults.lcwOptions : [7, 10]),
     [config]
   );
+
+  const filteredOptions = useMemo(
+    () => options.filter((o) => o.category === fleetType),
+    [options, fleetType]
+  );
+
+  const onFleetTypeChange = (next) => {
+    if (next === fleetType) return;
+    setFleetType(next);
+    // Selections belong to the previous fleet type; clear them on switch.
+    setForm((prev) => ({ ...prev, fourParts: [] }));
+  };
 
   const optionByFp = useMemo(() => {
     const map = {};
@@ -170,10 +183,33 @@ export default function App() {
           </div>
         )}
 
+        <div className="field" style={{ marginBottom: 20 }}>
+          <label>Fleet type</label>
+          <div className="seg">
+            <button
+              type="button"
+              className={fleetType === "widebody" ? "active" : ""}
+              onClick={() => onFleetTypeChange("widebody")}
+              disabled={running}
+            >
+              Widebody
+            </button>
+            <button
+              type="button"
+              className={fleetType === "narrowbody" ? "active" : ""}
+              onClick={() => onFleetTypeChange("narrowbody")}
+              disabled={running}
+            >
+              Narrowbody
+            </button>
+          </div>
+        </div>
+
         <div className="grid">
           <div>
             <RunForm
-              options={options}
+              options={filteredOptions}
+              fleetType={fleetType}
               loadingOptions={loadingOptions}
               optionsError={optionsError}
               form={form}
@@ -199,9 +235,9 @@ export default function App() {
                   <div className="empty-state">
                     <div className="big">📊</div>
                     <div>
-                      Select one or more widebody bid positions and run the
-                      optimization to see the optimal TALV, interactive charts and a
-                      downloadable Excel workbook.
+                      Select one or more bid positions and run the optimization to
+                      see the optimal TALV, interactive charts and a downloadable
+                      Excel workbook.
                     </div>
                   </div>
                 </div>

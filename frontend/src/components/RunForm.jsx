@@ -3,6 +3,7 @@ import FourPartSelect from "./FourPartSelect.jsx";
 
 export default function RunForm({
   options,
+  fleetType,
   loadingOptions,
   optionsError,
   form,
@@ -21,7 +22,7 @@ export default function RunForm({
       <h2>Run configuration</h2>
 
       <div className="field bid-field">
-        <label>Bid positions (widebody)</label>
+        <label>Bid positions ({fleetType === "narrowbody" ? "narrowbody" : "widebody"})</label>
         {loadingOptions ? (
           <div className="hint">Loading available positions…</div>
         ) : optionsError ? (

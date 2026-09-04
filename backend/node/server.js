@@ -121,6 +121,7 @@ function handleConfig(res) {
   sendJson(res, 200, {
     defaults: config.defaults,
     widebodyFleets: config.widebodyFleets,
+    narrowbodyFleets: config.narrowbodyFleets,
     app: config.app,
     mock: MOCK_ENV,
   });

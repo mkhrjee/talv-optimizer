@@ -61,19 +61,27 @@ def cmd_list_fourparts(args) -> int:
     period = detect_contract_period()
     emit(_period_payload(period))
 
+    all_fleets = list(settings.widebody_fleets) + list(settings.narrowbody_fleets)
+    widebody_set = {str(f) for f in settings.widebody_fleets}
+
     if args.mock:
         from talv_core.mock_data import mock_sequences, MOCK_FOURPARTS
 
         seq = mock_sequences(period, MOCK_FOURPARTS)
-        items = mosaic.summarize_fourparts(seq, settings.widebody_fleets)
+        items = mosaic.summarize_fourparts(seq, all_fleets)
     else:
         conn = mosaic.get_connection(settings.dsn)
         try:
-            items = mosaic.fetch_widebody_fourparts(
-                conn, period.con_year, period.con_month, settings.widebody_fleets
+            items = mosaic.fetch_fourparts(
+                conn, period.con_year, period.con_month, all_fleets
             )
         finally:
             conn.close()
+
+    for item in items:
+        item["category"] = (
+            "widebody" if item["equipment"] in widebody_set else "narrowbody"
+        )
 
     emit({"type": "fourparts", "items": items})
     return 0
@@ -177,7 +185,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("period", help="Print the detected contract period.")
-    sub.add_parser("list-fourparts", help="List available widebody 4-parts.")
+    sub.add_parser("list-fourparts", help="List available 4-parts (widebody and narrowbody).")
 
     run_p = sub.add_parser("run", help="Run the TALV sweep.")
     run_p.add_argument("--fourparts", required=True, help="Comma-separated 4-part codes.")

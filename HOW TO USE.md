@@ -18,20 +18,23 @@ the window to stop the tool.
 
 ## Using the tool
 
-1. **Pick your bid positions.** Under *Bid positions (widebody)*, search or
+1. **Choose a fleet type.** Use the *Widebody / Narrowbody* toggle near the
+   top to switch which bid positions are shown.
+
+2. **Pick your bid positions.** Under *Bid positions*, search or
    scroll the list and check every base/fleet/seat combination you want to
    run. You can select more than one at a time. Your selections are
    remembered the next time you open the tool.
 
-2. **Set the TALV range.** *TALV lower bound* and *TALV upper bound* control
+3. **Set the TALV range.** *TALV lower bound* and *TALV upper bound* control
    the range of values the tool will test (72–84 by default).
 
-3. **Choose the Line Construction Window.** Pick **± 7** or **± 10** credit
+4. **Choose the Line Construction Window.** Pick **± 7** or **± 10** credit
    hours.
 
-4. **Click Run optimization.** A progress bar shows what's being calculated.
+5. **Click Run optimization.** A progress bar shows what's being calculated.
 
-5. **Review the results.**
+6. **Review the results.**
    - Each bid position gets a tile showing its optimal TALV, open time, and
      pilot count. Click a tile to see that position's details below.
    - The chart and table show how lineholders, reserves, and open time change
@@ -39,7 +42,7 @@ the window to stop the tool.
    - Further down, the pilot credit table shows every employee's assigned
      credit at each TALV (scroll sideways to see more TALV values).
 
-6. **Download the spreadsheet.** Click **Download Excel** at the top of the
+7. **Download the spreadsheet.** Click **Download Excel** at the top of the
    results to get a workbook with the same information, formatted the same
    way as before.
 
@@ -52,9 +55,9 @@ page — you don't need to set it yourself.
   `Start TALV Optimizer.bat` again.
 - **The browser shows "can't reach this page":** Wait a few seconds and
   reload — the tool may still be starting up.
-- **A bid position you expected isn't in the list:** The list only shows
-  positions that have flying this month. If a position has none, it won't
-  appear.
+- **A bid position you expected isn't in the list:** Make sure the
+  *Widebody / Narrowbody* toggle is set to match the fleet you're looking
+  for. The list also only shows positions that have flying this month.
 - **Numbers look different from a previous run:** Make sure the TALV range
   and Line Construction Window match what you used before — both affect the
   result.

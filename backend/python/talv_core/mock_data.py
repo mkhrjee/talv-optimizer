@@ -15,7 +15,14 @@ import pandas as pd
 from .contract import ContractPeriod
 from .mosaic import prepare_sequences
 
-MOCK_FOURPARTS = ["777CALAXI", "777FOLAXI", "787CAORDI", "787FOMIAI"]
+MOCK_FOURPARTS = [
+    "777CALAXI",
+    "777FOLAXI",
+    "787CAORDI",
+    "787FOMIAI",
+    "320CALGAI",
+    "320FOLGAI",
+]
 
 
 def _seed(text: str) -> int:

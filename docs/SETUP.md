@@ -35,8 +35,8 @@ This installs Python and Node dependencies and builds a local copy of the app.
 2. Open the tool at **`http://localhost:5178`** (served by the backend).
 
 3. In the tool:
-   - Pick one or more **widebody bid positions** (multi-select; your last selection is
-     remembered).
+   - Toggle between **Widebody** and **Narrowbody** fleets, then pick one or more
+     **bid positions** (multi-select; your last selection is remembered).
    - Adjust **TALV bounds** (default 72–84) and the **LCW** (± 7 or ± 10) if needed.
    - Click **Run optimization**. Watch the progress bar.
    - Review the **optimal TALV**, interactive charts and summary table.

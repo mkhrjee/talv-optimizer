@@ -156,16 +156,20 @@ def fetch_absences(conn, four_part: str, pbs: str) -> pd.DataFrame:
     return df
 
 
-def fetch_widebody_fourparts(
-    conn, year: str, month: str, fleets: List[str]
-) -> List[dict]:
-    """Return the distinct widebody 4-part bid positions available this month.
+def fetch_fourparts(conn, year: str, month: str, fleets: List[str]) -> List[dict]:
+    """Return the distinct 4-part bid positions available this month for the
+    given fleet codes (widebody, narrowbody, or a mix).
 
     Derived from the same sequences source so the list always reflects what can
     actually be run.
     """
     seq = fetch_sequences(conn, year, month)
     return summarize_fourparts(seq, fleets)
+
+
+# Back-compat alias (previously widebody-only; the query itself was always
+# generic over the fleet list passed in).
+fetch_widebody_fourparts = fetch_fourparts
 
 
 def summarize_fourparts(seq: pd.DataFrame, fleets: List[str]) -> List[dict]:

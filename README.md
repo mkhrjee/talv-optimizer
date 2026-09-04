@@ -1,11 +1,11 @@
 # TALV Optimizer
 
 Self-serve tool to find the optimal **TALV (Target Average Line Value)** for each
-PBS run. Analysts pick one or more widebody bid positions, set the TALV bounds and
-the Line Construction Window (LCW), and the tool simulates schedule construction
-across the TALV range to find the value that minimizes open time — producing an
-interactive dashboard and a downloadable Excel workbook (matching the existing
-`TALVs.xlsx`).
+PBS run. Analysts pick one or more widebody or narrowbody bid positions, set the
+TALV bounds and the Line Construction Window (LCW), and the tool simulates
+schedule construction across the TALV range to find the value that minimizes open
+time — producing an interactive dashboard and a downloadable Excel workbook
+(matching the existing `TALVs.xlsx`).
 
 This replaces the hand-run Databricks notebook (`TALV Final - 777CALAXI.ipynb`).
 
@@ -75,8 +75,8 @@ npm run dev
 ## Configuration
 
 Shared defaults live in [`shared/config.json`](shared/config.json) (TALV bounds, step,
-LCW options, widebody fleet codes, Mosaic DSN, backend port) — read by the Python
-core, Node backend and frontend.
+LCW options, widebody/narrowbody fleet codes, Mosaic DSN, backend port) — read by
+the Python core, Node backend and frontend.
 
 ## Repository layout
 

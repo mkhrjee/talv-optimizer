@@ -14,6 +14,7 @@
     "dsn": "Mosaic2"
   },
   "widebodyFleets": ["777", "787", "767", "330", "350"],
+  "narrowbodyFleets": ["737", "319", "320", "321"],
   "backend": {
     "port": 5178
   }
